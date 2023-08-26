@@ -8,11 +8,18 @@ public class RockGrid : MonoBehaviour {
 
     private EdgeCollider2D winTrigger;
     private List<Rock> rocks;
+
     private int floor;
+    public int Floor { get { return floor; } }
 
     void Awake() {
         winTrigger = GetComponent<EdgeCollider2D>();
         rocks = new List<Rock>();
+    }
+
+    void Start() {
+        floor++;
+        GenerateLevel();
     }
 
     void Update() {
@@ -98,8 +105,8 @@ public class RockGrid : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D collider) {
         Debug.Log("Beat this floor");
-        EventBus.instance.TriggerOnFloorCleared();
         floor++;
+        EventBus.instance.TriggerOnFloorCleared(this);
         GenerateLevel();
     }
 }

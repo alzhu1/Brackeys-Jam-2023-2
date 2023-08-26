@@ -57,7 +57,7 @@ public class Player : MonoBehaviour {
         }
     }
 
-    void ReceiveFloorClearedEvent() {
+    void ReceiveFloorClearedEvent(RockGrid rg) {
         // Move player to top again
         transform.position = new Vector3(transform.position.x, 5);
     }

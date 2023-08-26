@@ -6,7 +6,8 @@ using UnityEngine;
 public class EventBus : MonoBehaviour {
     public static EventBus instance = null;
 
-    public event Action OnFloorCleared = delegate {};
+    public event Action<LevelManager> OnTimerStart = delegate {};
+    public event Action<RockGrid> OnFloorCleared = delegate {};
 
     void Awake() {
         if (instance == null) {
@@ -18,7 +19,11 @@ public class EventBus : MonoBehaviour {
         }
     }
 
-    public void TriggerOnFloorCleared() {
-        OnFloorCleared?.Invoke();
+    public void TriggerOnTimerStart(LevelManager lm) {
+        OnTimerStart?.Invoke(lm);
+    }
+
+    public void TriggerOnFloorCleared(RockGrid rg) {
+        OnFloorCleared?.Invoke(rg);
     }
 }
