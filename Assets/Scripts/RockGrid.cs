@@ -18,7 +18,15 @@ public class RockGrid : MonoBehaviour {
     }
 
     void Start() {
-        floor++;
+        EventBus.instance.OnStart += ReceiveStartEvent;
+    }
+
+    void OnDestroy() {
+        EventBus.instance.OnStart -= ReceiveStartEvent;
+    }
+
+    void ReceiveStartEvent(LevelManager lm) {
+        floor = 1;
         GenerateLevel();
     }
 

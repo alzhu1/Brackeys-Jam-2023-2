@@ -9,23 +9,34 @@ public class Player : MonoBehaviour {
 
     private Rigidbody2D rb;
 
+    private bool canMove;
+
     private float horizontal;
     private bool shouldDrill;
     private Vector2 drillDirection;
 
     void Awake() {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0;
     }
 
     void Start() {
+        EventBus.instance.OnStart += ReceiveStartEvent;
         EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
+        EventBus.instance.OnLose += ReceiveLoseEvent;
     }
 
     void OnDestroy() {
+        EventBus.instance.OnStart -= ReceiveStartEvent;
         EventBus.instance.OnFloorCleared -= ReceiveFloorClearedEvent;
+        EventBus.instance.OnLose -= ReceiveLoseEvent;
     }
 
     void Update() {
+        if (!canMove) {
+            return;
+        }
+
         horizontal = Input.GetAxisRaw("Horizontal");
 
         if (!shouldDrill) {
@@ -43,6 +54,10 @@ public class Player : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        if (!canMove) {
+            return;
+        }
+
         Vector2 currVelocity = rb.velocity;
         currVelocity.x = horizontal * moveSpeed * Time.fixedDeltaTime;
         rb.velocity = currVelocity;
@@ -57,8 +72,19 @@ public class Player : MonoBehaviour {
         }
     }
 
+    void ReceiveStartEvent(LevelManager lm) {
+        canMove = true;
+        rb.gravityScale = 1;
+        transform.position = new Vector3(0, 5);
+    }
+
     void ReceiveFloorClearedEvent(RockGrid rg) {
         // Move player to top again
         transform.position = new Vector3(transform.position.x, 5);
+    }
+
+    void ReceiveLoseEvent() {
+        canMove = false;
+        rb.gravityScale = 0;
     }
 }
