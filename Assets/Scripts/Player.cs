@@ -17,6 +17,14 @@ public class Player : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
     }
 
+    void Start() {
+        EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
+    }
+
+    void OnDestroy() {
+        EventBus.instance.OnFloorCleared -= ReceiveFloorClearedEvent;
+    }
+
     void Update() {
         horizontal = Input.GetAxisRaw("Horizontal");
 
@@ -47,5 +55,10 @@ public class Player : MonoBehaviour {
             shouldDrill = false;
             drillDirection = Vector2.zero;
         }
+    }
+
+    void ReceiveFloorClearedEvent() {
+        // Move player to top again
+        transform.position = new Vector3(transform.position.x, 5);
     }
 }

@@ -3,53 +3,103 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RockGrid : MonoBehaviour {
+    [SerializeField] private int width;
     [SerializeField] private Rock rockPrefab;
 
-    void Start() {
-        
+    private EdgeCollider2D winTrigger;
+    private List<Rock> rocks;
+    private int floor;
+
+    void Awake() {
+        winTrigger = GetComponent<EdgeCollider2D>();
+        rocks = new List<Rock>();
     }
 
     void Update() {
         // TODO: Remove
         if (Input.GetKeyDown(KeyCode.P)) {
-            GenerateLevel(5, 4);
+            GenerateLevel();
         }
     }
 
-    public void GenerateLevel(int width, int depth) {
+    int GetHalfWidthForFloor() {
+        return Mathf.Min(2 + (floor / 4), width / 2);
+    }
+
+    public void GenerateLevel() {
+        foreach (Rock rock in rocks) {
+            if (rock != null) {
+                Destroy(rock.gameObject);
+            }
+        }
+        rocks.Clear();
+
+        int depth = 4 + floor / 5;
+
         // Every 5 levels, the difficulty should increase?
         // For now, the path can just be the easiest blocks
 
         // BFS: Start at the top (can just be rock grid y position)
+        // TODO: Depending on floor, set minX and maxX respectively
 
-        Vector2Int currPos = new Vector2Int(Random.Range(0, width) - (width / 2), 0);
+        int minX = -GetHalfWidthForFloor();
+        int maxX = GetHalfWidthForFloor();
+        Vector2Int currPos = new Vector2Int(Random.Range(minX, maxX + 1), 0);
+
         HashSet<Vector2Int> rockPositions = new HashSet<Vector2Int>();
+        List<Vector2Int> availableNextPos = new List<Vector2Int>();
 
         while (currPos.y > -depth) {
             rockPositions.Add(currPos);
 
             // Pick a random direction
-            float chance = Random.Range(0f, 1f);
-            if (chance <= 0.33f && !rockPositions.Contains(currPos + Vector2Int.left)) {
-                currPos += Vector2Int.left;
-            } else if (chance <= 0.67f && !rockPositions.Contains(currPos + Vector2Int.right)) {
-                currPos += Vector2Int.right;
-            } else {
-                currPos += Vector2Int.down;
+            availableNextPos.Clear();
+            availableNextPos.Add(currPos + Vector2Int.down);
+
+            Vector2Int leftPos = currPos + Vector2Int.left;
+            Vector2Int rightPos = currPos + Vector2Int.right;
+
+            if (leftPos.x >= minX && leftPos.x <= maxX && !rockPositions.Contains(leftPos)) {
+                availableNextPos.Add(leftPos);
             }
+
+            if (rightPos.x >= minX && rightPos.x <= maxX && !rockPositions.Contains(rightPos)) {
+                availableNextPos.Add(rightPos);
+            }
+
+            currPos = availableNextPos[Random.Range(0, availableNextPos.Count)];
         }
 
         // Positions are generated, now instantiate
         for (int y = 0; y > -depth; y--) {
             for (int x = -width / 2; x < (width - width / 2); x++) {
-                Rock rock = Instantiate(rockPrefab.gameObject, new Vector3(x, y), Quaternion.identity, transform).GetComponent<Rock>();
+                Rock rock = Instantiate(rockPrefab.gameObject, Vector3.zero, Quaternion.identity, transform).GetComponent<Rock>();
+                rock.transform.localPosition = new Vector3(x, y);
 
                 if (rockPositions.Contains(new Vector2Int(x, y))) {
-                    rock.SetHp(2);
+                    rock.SetLevel(1);
+                } else if (x < minX || x > maxX) {
+                    rock.SetLevel(0);
                 } else {
-                    rock.SetHp(6);
+                    rock.SetLevel(Random.Range(2, 6));
                 }
+                rocks.Add(rock);
             }
         }
+
+        // Add a win trigger below the grid (probably say 2 units below)
+        float lowestY = transform.position.y - depth;
+        List<Vector2> points = new List<Vector2>{
+            new Vector2(-width / 2, lowestY - 2),
+            new Vector2(width / 2, lowestY - 2)
+        };
+        winTrigger.SetPoints(points);
+    }
+
+    void OnTriggerEnter2D(Collider2D collider) {
+        Debug.Log("Beat this floor");
+        EventBus.instance.TriggerOnFloorCleared();
+        floor++;
+        GenerateLevel();
     }
 }
