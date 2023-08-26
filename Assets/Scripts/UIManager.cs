@@ -8,6 +8,12 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Text floorText;
     [SerializeField] private GameObject loseUI;
 
+    private Text loseUIText;
+
+    void Awake() {
+        loseUIText = loseUI.GetComponentInChildren<Text>(true);
+    }
+
     void Start() {
         EventBus.instance.OnStart += ReceiveStartEvent;
         EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
@@ -37,8 +43,11 @@ public class UIManager : MonoBehaviour {
         floorText.text = $"Floor {rg.Floor}";
     }
 
-    void ReceiveLoseEvent() {
+    void ReceiveLoseEvent(LevelManager lm) {
         loseUI.SetActive(true);
+        // TODO: This sucks, find better way
+        RockGrid rg = FindAnyObjectByType<RockGrid>();
+        loseUIText.text = $"Time's up!\n\nBest floor: Floor {rg.Floor}\n\nPress M to restart";
     }
 
     IEnumerator UpdateTimer(LevelManager lm) {

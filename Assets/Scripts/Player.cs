@@ -83,8 +83,9 @@ public class Player : MonoBehaviour {
         transform.position = new Vector3(transform.position.x, 5);
     }
 
-    void ReceiveLoseEvent() {
+    void ReceiveLoseEvent(LevelManager lm) {
         canMove = false;
         rb.gravityScale = 0;
+        rb.velocity = Vector2.zero;
     }
 }

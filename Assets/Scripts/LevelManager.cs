@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour {
 
             if (timer <= 0) {
                 // Trigger lose condition
-                EventBus.instance.TriggerOnLose();
+                EventBus.instance.TriggerOnLose(this);
                 started = false;
             }
         }
