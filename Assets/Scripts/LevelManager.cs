@@ -16,12 +16,12 @@ public class LevelManager : MonoBehaviour {
 
     void Start() {
         EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
-        EventBus.instance.OnTimerBlockDestroyed += ReceiveTimerBlockDestroyedEvent;
+        EventBus.instance.OnBlockDestroyed += ReceiveBlockDestroyedEvent;
     }
 
     void OnDestroy() {
         EventBus.instance.OnFloorCleared -= ReceiveFloorClearedEvent;
-        EventBus.instance.OnTimerBlockDestroyed -= ReceiveTimerBlockDestroyedEvent;
+        EventBus.instance.OnBlockDestroyed -= ReceiveBlockDestroyedEvent;
     }
 
     void Update() {
@@ -49,7 +49,9 @@ public class LevelManager : MonoBehaviour {
         EventBus.instance.TriggerOnFloorUpdate(this);
     }
 
-    void ReceiveTimerBlockDestroyedEvent() {
-        timer += timerBlockGain;
+    void ReceiveBlockDestroyedEvent(bool isTimer) {
+        if (isTimer) {
+            timer += timerBlockGain;
+        }
     }
 }

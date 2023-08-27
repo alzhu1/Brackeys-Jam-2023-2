@@ -76,9 +76,7 @@ public class Rock : MonoBehaviour {
         sr.color = currColor;
 
         if (hp <= 0) {
-            if (timerBlock) {
-                EventBus.instance.TriggerOnTimerBlockDestroyed();
-            }
+            EventBus.instance.TriggerOnBlockDestroyed(timerBlock);
             Destroy(gameObject);
         }
     }
