@@ -8,6 +8,7 @@ public class EventBus : MonoBehaviour {
 
     public event Action<LevelManager> OnStart = delegate {};
     public event Action<RockGrid> OnFloorCleared = delegate {};
+    public event Action<LevelManager> OnFloorUpdate = delegate {};
     public event Action<LevelManager> OnLose = delegate {};
 
     void Awake() {
@@ -26,6 +27,10 @@ public class EventBus : MonoBehaviour {
 
     public void TriggerOnFloorCleared(RockGrid rg) {
         OnFloorCleared?.Invoke(rg);
+    }
+
+    public void TriggerOnFloorUpdate(LevelManager lm) {
+        OnFloorUpdate?.Invoke(lm);
     }
 
     public void TriggerOnLose(LevelManager lm) {

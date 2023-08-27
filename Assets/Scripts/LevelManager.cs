@@ -43,6 +43,6 @@ public class LevelManager : MonoBehaviour {
 
     void ReceiveFloorClearedEvent(RockGrid rg) {
         floor++;
-        rg.GenerateLevel();
+        EventBus.instance.TriggerOnFloorUpdate(this);
     }
 }

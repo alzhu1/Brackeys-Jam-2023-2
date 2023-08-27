@@ -17,13 +17,13 @@ public class UIManager : MonoBehaviour {
 
     void Start() {
         EventBus.instance.OnStart += ReceiveStartEvent;
-        EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
+        EventBus.instance.OnFloorUpdate += ReceiveFloorUpdateEvent;
         EventBus.instance.OnLose += ReceiveLoseEvent;
     }
 
     void OnDestroy() {
         EventBus.instance.OnStart -= ReceiveStartEvent;
-        EventBus.instance.OnFloorCleared -= ReceiveFloorClearedEvent;
+        EventBus.instance.OnFloorUpdate -= ReceiveFloorUpdateEvent;
         EventBus.instance.OnLose -= ReceiveLoseEvent;
     }
 
@@ -41,8 +41,8 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(UpdateTimer(lm));
     }
 
-    void ReceiveFloorClearedEvent(RockGrid rg) {
-        floorText.text = $"Floor {rg.Floor}";
+    void ReceiveFloorUpdateEvent(LevelManager lm) {
+        floorText.text = $"Floor {lm.Floor}";
     }
 
     void ReceiveLoseEvent(LevelManager lm) {

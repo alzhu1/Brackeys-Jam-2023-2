@@ -75,7 +75,7 @@ public class Player : MonoBehaviour {
     void ReceiveStartEvent(LevelManager lm) {
         canMove = true;
         rb.gravityScale = 1;
-        transform.position = new Vector3(0, 15);
+        transform.position = new Vector3(0, 18);
     }
 
     void ReceiveFloorClearedEvent(RockGrid rg) {

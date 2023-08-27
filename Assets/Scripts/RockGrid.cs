@@ -20,14 +20,20 @@ public class RockGrid : MonoBehaviour {
 
     void Start() {
         EventBus.instance.OnStart += ReceiveStartEvent;
+        EventBus.instance.OnFloorUpdate += ReceiveFloorUpdateEvent;
     }
 
     void OnDestroy() {
         EventBus.instance.OnStart -= ReceiveStartEvent;
+        EventBus.instance.OnFloorUpdate -= ReceiveFloorUpdateEvent;
     }
 
     void ReceiveStartEvent(LevelManager lm) {
         this.lm = lm;
+        GenerateLevel();
+    }
+
+    void ReceiveFloorUpdateEvent(LevelManager lm) {
         GenerateLevel();
     }
 
@@ -99,8 +105,8 @@ public class RockGrid : MonoBehaviour {
         // Add a win trigger below the grid (probably say 2 units below)
         float lowestY = transform.position.y - depth;
         List<Vector2> points = new List<Vector2>{
-            new Vector2(-width / 2, lowestY - 2),
-            new Vector2(width / 2, lowestY - 2)
+            new Vector2(-width / 2, lowestY - 8),
+            new Vector2(width / 2, lowestY - 8)
         };
         winTrigger.SetPoints(points);
     }
