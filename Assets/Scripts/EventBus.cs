@@ -10,6 +10,7 @@ public class EventBus : MonoBehaviour {
     public event Action<RockGrid> OnFloorCleared = delegate {};
     public event Action<LevelManager> OnFloorUpdate = delegate {};
     public event Action<LevelManager> OnLose = delegate {};
+    public event Action OnTimerBlockDestroyed = delegate {};
 
     void Awake() {
         if (instance == null) {
@@ -35,5 +36,9 @@ public class EventBus : MonoBehaviour {
 
     public void TriggerOnLose(LevelManager lm) {
         OnLose?.Invoke(lm);
+    }
+
+    public void TriggerOnTimerBlockDestroyed() {
+        OnTimerBlockDestroyed?.Invoke();
     }
 }

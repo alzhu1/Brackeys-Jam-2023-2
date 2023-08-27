@@ -5,6 +5,7 @@ using UnityEngine;
 public class RockGrid : MonoBehaviour {
     [SerializeField] private int width;
     [SerializeField] private Rock rockPrefab;
+    [SerializeField] private float timerBlockChance;
 
     private EdgeCollider2D winTrigger;
     private List<Rock> rocks;
@@ -96,7 +97,12 @@ public class RockGrid : MonoBehaviour {
                 } else if (x < minX || x > maxX) {
                     rock.SetLevel(0);
                 } else {
-                    rock.SetLevel(Random.Range(2, 6));
+                    float chance = Random.Range(0f, 1f);
+                    if (chance < timerBlockChance) {
+                        rock.SetTimer();
+                    } else {
+                        rock.SetLevel(Random.Range(2, 6));
+                    }
                 }
                 rocks.Add(rock);
             }
@@ -105,8 +111,8 @@ public class RockGrid : MonoBehaviour {
         // Add a win trigger below the grid (probably say 2 units below)
         float lowestY = transform.position.y - depth;
         List<Vector2> points = new List<Vector2>{
-            new Vector2(-width / 2, lowestY - 8),
-            new Vector2(width / 2, lowestY - 8)
+            new Vector2(-width / 2, lowestY - 10),
+            new Vector2(width / 2, lowestY - 10)
         };
         winTrigger.SetPoints(points);
     }

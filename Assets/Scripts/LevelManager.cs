@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour {
     [SerializeField] private float startTime;
+    [SerializeField] private float timerBlockGain;
 
     private float timer;
     public float Timer { get { return timer; } }
@@ -15,10 +16,12 @@ public class LevelManager : MonoBehaviour {
 
     void Start() {
         EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
+        EventBus.instance.OnTimerBlockDestroyed += ReceiveTimerBlockDestroyedEvent;
     }
 
     void OnDestroy() {
         EventBus.instance.OnFloorCleared -= ReceiveFloorClearedEvent;
+        EventBus.instance.OnTimerBlockDestroyed -= ReceiveTimerBlockDestroyedEvent;
     }
 
     void Update() {
@@ -44,5 +47,9 @@ public class LevelManager : MonoBehaviour {
     void ReceiveFloorClearedEvent(RockGrid rg) {
         floor++;
         EventBus.instance.TriggerOnFloorUpdate(this);
+    }
+
+    void ReceiveTimerBlockDestroyedEvent() {
+        timer += timerBlockGain;
     }
 }
