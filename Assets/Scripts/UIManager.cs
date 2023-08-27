@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
+    [SerializeField] private GameObject titleUI;
     [SerializeField] private Text timerText;
     [SerializeField] private Text floorText;
     [SerializeField] private GameObject loseUI;
@@ -34,6 +35,7 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < transform.childCount; i++) {
             transform.GetChild(i).gameObject.SetActive(true);
         }
+        titleUI.SetActive(false);
         loseUI.SetActive(false);
         floorText.text = "Floor 1";
         StartCoroutine(UpdateTimer(lm));
@@ -45,9 +47,7 @@ public class UIManager : MonoBehaviour {
 
     void ReceiveLoseEvent(LevelManager lm) {
         loseUI.SetActive(true);
-        // TODO: This sucks, find better way
-        RockGrid rg = FindAnyObjectByType<RockGrid>();
-        loseUIText.text = $"Time's up!\n\nBest floor: Floor {rg.Floor}\n\nPress M to restart";
+        loseUIText.text = $"Time's up!\n\nBest floor: Floor {lm.Floor}\n\nPress R to restart.";
     }
 
     IEnumerator UpdateTimer(LevelManager lm) {

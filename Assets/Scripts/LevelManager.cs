@@ -8,10 +8,22 @@ public class LevelManager : MonoBehaviour {
     private float timer;
     public float Timer { get { return timer; } }
 
+    private int floor;
+    public int Floor { get { return floor; } }
+
     private bool started;
 
+    void Start() {
+        EventBus.instance.OnFloorCleared += ReceiveFloorClearedEvent;
+    }
+
+    void OnDestroy() {
+        EventBus.instance.OnFloorCleared -= ReceiveFloorClearedEvent;
+    }
+
     void Update() {
-        if (!started && Input.GetKeyDown(KeyCode.M)) {
+        if (!started && Input.GetKeyDown(KeyCode.R)) {
+            floor = 1;
             EventBus.instance.TriggerOnStart(this);
             timer = startTime;
             started = true;
@@ -27,5 +39,10 @@ public class LevelManager : MonoBehaviour {
                 started = false;
             }
         }
+    }
+
+    void ReceiveFloorClearedEvent(RockGrid rg) {
+        floor++;
+        rg.GenerateLevel();
     }
 }

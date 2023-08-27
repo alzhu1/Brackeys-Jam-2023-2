@@ -9,8 +9,9 @@ public class RockGrid : MonoBehaviour {
     private EdgeCollider2D winTrigger;
     private List<Rock> rocks;
 
-    private int floor;
-    public int Floor { get { return floor; } }
+    private LevelManager lm;
+
+    public int Floor { get { return lm != null ? lm.Floor : 1; } }
 
     void Awake() {
         winTrigger = GetComponent<EdgeCollider2D>();
@@ -26,19 +27,12 @@ public class RockGrid : MonoBehaviour {
     }
 
     void ReceiveStartEvent(LevelManager lm) {
-        floor = 1;
+        this.lm = lm;
         GenerateLevel();
     }
 
-    void Update() {
-        // TODO: Remove
-        if (Input.GetKeyDown(KeyCode.P)) {
-            GenerateLevel();
-        }
-    }
-
     int GetHalfWidthForFloor() {
-        return Mathf.Min(2 + (floor / 4), width / 2);
+        return Mathf.Min(2 + (lm.Floor / 4), width / 2);
     }
 
     public void GenerateLevel() {
@@ -49,7 +43,7 @@ public class RockGrid : MonoBehaviour {
         }
         rocks.Clear();
 
-        int depth = 4 + floor / 5;
+        int depth = 4 + lm.Floor / 5;
 
         // Every 5 levels, the difficulty should increase?
         // For now, the path can just be the easiest blocks
@@ -113,8 +107,6 @@ public class RockGrid : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D collider) {
         Debug.Log("Beat this floor");
-        floor++;
         EventBus.instance.TriggerOnFloorCleared(this);
-        GenerateLevel();
     }
 }
